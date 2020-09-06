@@ -1,6 +1,7 @@
 - hosts: master
   become: yes
   tasks:
+
     - name: Get Network Interfaces
       shell: hostname -I
       register: master_interfaces

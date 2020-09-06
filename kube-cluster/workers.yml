@@ -2,6 +2,7 @@
   become: yes
   gather_facts: false
   tasks:
+
     - name: get join command
       become: yes
       become_user: vagrant

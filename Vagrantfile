@@ -21,13 +21,13 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   (1..MASTERS).each do |i|
     config.vm.define :"k8s-master#{i}" do |master|
 
-      master.vm.provider "virtualbox" do |master_vb|
-        master_vb.memory = MASTER_MEMORY
-        master_vb.cpus = MASTER_CPUS
+      master.vm.provider "virtualbox" do |vb|
+        vb.cpus = MASTER_CPUS
+        vb.memory = MASTER_MEMORY
       end
 
       ip = 100 + i
-      master.vm.hostname = "k8s-master#{i}.testdomain"
+      master.vm.hostname = "k8s-master#{i}.localdomain"
       master.vm.network "private_network", ip: "192.168.99.#{ip}"
 
       master.vm.provision :shell, inline: <<-SHELL
@@ -62,13 +62,13 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   (1..WORKERS).each do |i|
     config.vm.define :"k8s-worker#{i}" do |worker|
 
-      worker.vm.provider "virtualbox" do |worker_vb|
-        worker_vb.memory = WORKER_MEMORY
-        worker_vb.cpus = WORKER_CPUS
+      worker.vm.provider "virtualbox" do |vb|
+        vb.cpus = WORKER_CPUS
+        vb.memory = WORKER_MEMORY
       end
 
       ip = 200 + i
-      worker.vm.hostname = "k8s-worker#{i}.testdomain"
+      worker.vm.hostname = "k8s-worker#{i}.localdomain"
       worker.vm.network "private_network", ip: "192.168.99.#{ip}"
 
       worker.vm.provision :shell, inline: <<-SHELL
