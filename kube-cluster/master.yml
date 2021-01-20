@@ -2,18 +2,12 @@
   become: yes
   tasks:
 
-    - name: Get Network Interfaces
-      shell: hostname -I
-      register: master_interfaces
-
-    - name: Get Specific Network Interface
-      shell: for i in {{ master_interfaces.stdout }}; do echo $i | grep 192; done
-      register: master_interface
-      ignore_errors: yes
-      no_log: true
+    - name: Set Fact for Gateway IP Address
+      set_fact:
+        gateway_address: "{{ ansible_eth1.ipv4.network }}/{{ ansible_eth1.ipv4.netmask }}"
 
     - name: initialize the cluster
-      shell: kubeadm init --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address {{ master_interface.stdout }} >> cluster_initialized.txt
+      shell: kubeadm init --pod-network-cidr=10.244.0.0/16 --apiserver-cert-extra-sans={{ gateway_address | ipaddr('next_usable') }} --apiserver-advertise-address={{ hostvars[inventory_hostname]['ansible_eth1']['ipv4']['address'] }} >> cluster_initialized.txt
       args:
         chdir: $HOME
         creates: cluster_initialized.txt
@@ -36,7 +30,7 @@
     - name: install Pod network
       become: yes
       become_user: vagrant
-      shell: kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/a70459be0084506e4ec919aa1c114638878db11b/Documentation/kube-flannel.yml >> pod_network_setup.txt
+      shell: kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/5a4cdae719b03c52be5486763003d25b7849d627/Documentation/kube-flannel.yml >> pod_network_setup.txt
       args:
         chdir: $HOME
         creates: pod_network_setup.txt
