@@ -69,10 +69,9 @@
     kube_version: 1.19.7
   become: yes
   tasks:
+
    - name: install kubectl
      yum:
         name: kubectl-{{ kube_version }}
         state: present
         allow_downgrade: yes
-
-
