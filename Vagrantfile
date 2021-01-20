@@ -1,8 +1,10 @@
 # Vagrantfile API/syntax version
 VAGRANTFILE_API_VERSION = "2"
+host_network = '192.168.99'
+
 
 # Number of each type of node to provision
-MASTERS = 1
+MASTERS = 1 # Keep to Max 1
 WORKERS = 2
 
 # Resources for Master Nodes
@@ -12,8 +14,6 @@ MASTER_MEMORY = 2048
 # Resources for Worker Nodes
 WORKER_CPUS = 2
 WORKER_MEMORY = 4096
-
-host_network = '192.168.99'
 
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
@@ -56,7 +56,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         ansible.host_key_checking = false
         ansible.playbook = "./kube-cluster/master.yml"
       end
-
     end
   end
 
@@ -98,8 +97,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         ansible.playbook = "./kube-cluster/workers.yml"
         ansible.limit = ["k8s-master1", "k8s-worker#{i}"]
       end
-
     end
   end
-
 end

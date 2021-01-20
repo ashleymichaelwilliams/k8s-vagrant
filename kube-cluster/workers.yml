@@ -17,8 +17,9 @@
 - hosts: workers
   become: yes
   tasks:
+
     - name: join cluster
-      shell: "{{ hostvars['k8s-master1'].join_command }} --ignore-preflight-errors all  >> node_joined.txt"
+      shell: "{{ hostvars['k8s-master1'].join_command }} --ignore-preflight-errors all >> node_joined.txt"
       args:
         chdir: $HOME
         creates: node_joined.txt
