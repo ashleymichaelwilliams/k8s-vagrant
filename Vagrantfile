@@ -13,6 +13,8 @@ MASTER_MEMORY = 2048
 WORKER_CPUS = 2
 WORKER_MEMORY = 4096
 
+host_network = '192.168.99'
+
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.box = "centos/7"
@@ -26,9 +28,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         vb.memory = MASTER_MEMORY
       end
 
-      ip = 100 + i
+      host_ip = 100 + i
       master.vm.hostname = "k8s-master#{i}.localdomain"
-      master.vm.network "private_network", ip: "192.168.99.#{ip}"
+      master.vm.network "private_network", ip: "#{host_network}.#{host_ip}"
+      master.vm.network "forwarded_port", guest: 6443, host: "#{i}6443", protocol: "tcp", auto_correct: true
 
       master.vm.provision :shell, inline: <<-SHELL
         echo "Kubernetes Master-#{i}" > /tmp/result
@@ -67,9 +70,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         vb.memory = WORKER_MEMORY
       end
 
-      ip = 200 + i
+      host_ip = 200 + i
       worker.vm.hostname = "k8s-worker#{i}.localdomain"
-      worker.vm.network "private_network", ip: "192.168.99.#{ip}"
+      worker.vm.network "private_network", ip: "#{host_network}.#{host_ip}"
 
       worker.vm.provision :shell, inline: <<-SHELL
         echo "Kubernetes Worker-#{i}" > /tmp/result

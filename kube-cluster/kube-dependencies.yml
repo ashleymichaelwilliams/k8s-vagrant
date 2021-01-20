@@ -1,4 +1,6 @@
 - hosts: all
+  vars:
+    kube_version: 1.19.7
   become: yes
   tasks:
 
@@ -43,13 +45,13 @@
 
    - name: install kubelet
      yum:
-        name: kubelet-1.14.0
+        name: kubelet-{{ kube_version }}
         state: present
         update_cache: true
 
    - name: install kubeadm
      yum:
-        name: kubeadm-1.14.0
+        name: kubeadm-{{ kube_version }}
         state: present
 
    - name: start kubelet
@@ -63,10 +65,14 @@
 
 
 - hosts: master
+  vars:
+    kube_version: 1.19.7
   become: yes
   tasks:
    - name: install kubectl
      yum:
-        name: kubectl-1.14.0
+        name: kubectl-{{ kube_version }}
         state: present
         allow_downgrade: yes
+
+
